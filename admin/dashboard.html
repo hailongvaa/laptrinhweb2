@@ -580,6 +580,87 @@
     </div>
 
     <!-- Script RBAC & Auth -->
+    <script src="../assets/js/config.js"></script>
     <script src="../assets/js/admin-auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const res = await apiFetch('/api/dashboard/stats');
+                if (res.ok && res.data && res.data.success) {
+                    const stats = res.data.stats || {};
+                    const recentOrders = res.data.recentOrders || [];
+
+                    // 1. Đồng bộ 4 Card KPI Doanh thu và Số liệu
+                    const revEl = document.querySelector('.stat-card--revenue .stat-card__value');
+                    if (revEl && stats.total_revenue !== undefined) {
+                        revEl.textContent = Number(stats.total_revenue).toLocaleString('vi-VN') + '₫';
+                    }
+
+                    const prodEl = document.querySelector('.stat-card--products .stat-card__value');
+                    if (prodEl && stats.total_products !== undefined) {
+                        prodEl.textContent = stats.total_products + ' xe';
+                    }
+
+                    const orderEl = document.querySelector('.stat-card--orders .stat-card__value');
+                    if (orderEl && stats.total_orders !== undefined) {
+                        orderEl.textContent = stats.total_orders + ' đơn';
+                    }
+
+                    const pendingEl = document.querySelector('.stat-card--orders .trend-desc');
+                    if (pendingEl && stats.pending_orders !== undefined) {
+                        pendingEl.textContent = stats.pending_orders + ' đơn đang chờ xác nhận';
+                    }
+
+                    const brandEl = document.querySelector('.stat-card--brands .stat-card__value');
+                    if (brandEl && stats.total_brands !== undefined) {
+                        brandEl.textContent = stats.total_brands + ' hãng';
+                    }
+
+                    // 2. Đồng bộ bảng 5 đơn hàng mới nhất
+                    const tbody = document.querySelector('.table-card tbody');
+                    if (tbody && recentOrders.length > 0) {
+                        const statusMap = {
+                            'pending': { text: 'Chờ xử lý', class: 'badge--warning' },
+                            'confirmed': { text: 'Đã xác nhận', class: 'badge--info' },
+                            'shipping': { text: 'Đang giao', class: 'badge--info' },
+                            'delivered': { text: 'Đã giao', class: 'badge--success' },
+                            'completed': { text: 'Đã hoàn thành', class: 'badge--success' },
+                            'cancelled': { text: 'Đã hủy', class: 'badge--danger' }
+                        };
+
+                        let html = '';
+                        recentOrders.forEach(o => {
+                            const st = statusMap[o.order_status] || { text: o.order_status || 'Chờ xử lý', class: 'badge--warning' };
+                            const d = new Date(o.created_at || Date.now());
+                            const dateFormatted = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+                            const itemName = o.first_item_name || 'Mô hình xe diecast';
+
+                            html += `
+                                <tr>
+                                    <td><strong>#${o.order_code}</strong></td>
+                                    <td>
+                                        <div style="font-weight:600; color:var(--slate-900);">${o.recipient_name || 'Khách hàng'}</div>
+                                        <div style="font-size:0.75rem; color:var(--slate-400);">${o.recipient_phone || '---'}</div>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight:600;">${itemName}</span>
+                                    </td>
+                                    <td>${dateFormatted}</td>
+                                    <td><strong style="color:var(--slate-900);">${Number(o.total_amount || 0).toLocaleString('vi-VN')}₫</strong></td>
+                                    <td><span class="badge ${st.class}">${st.text}</span></td>
+                                    <td style="text-align: right;">
+                                        <a href="orders.html" class="btn btn-outline btn-sm">Chi tiết</a>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        tbody.innerHTML = html;
+                    }
+                }
+            } catch (err) {
+                console.warn('Không thể nạp dữ liệu thống kê Dashboard:', err);
+            }
+        });
+    </script>
 </body>
 </html>

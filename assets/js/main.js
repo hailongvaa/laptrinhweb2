@@ -6,7 +6,90 @@ document.addEventListener("DOMContentLoaded", function () {
   initWishlistButtons();
   initViewToggle();
   initContactForm();
+  updateHeaderAuthState();
+  updateHeaderCartBadge();
 });
+
+// ==========================================
+// QUẢN LÝ TÀI KHOẢN VÀ ĐĂNG NHẬP / ĐĂNG XUẤT
+// ==========================================
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem("cms_auth_user") || localStorage.getItem("carModelStoreCurrentUser") || "null");
+  } catch (e) {
+    return null;
+  }
+}
+
+function updateHeaderAuthState() {
+  var topAuth = document.querySelector(".top-auth");
+  if (!topAuth) return;
+
+  var user = getCurrentUser();
+  if (user && user.email) {
+    var displayName = user.name || user.fullname || user.email.split("@")[0];
+    var isAdmin = user.role === "admin";
+    topAuth.innerHTML = 
+      '<a href="account.html" style="color:#d4af37; font-size:0.82rem; margin-right:8px; text-decoration:none;" title="Xem thông tin tài khoản & đơn đã đặt">👋 ' + displayName + (isAdmin ? ' (Admin)' : '') + '</a>' +
+      '<a href="account.html" class="top-login-link" style="margin-right:8px; color:#e2e8f0;">[Đơn đã đặt]</a>' +
+      (isAdmin ? '<a href="admin/dashboard.html" class="top-login-link" style="margin-right:8px; color:#38bdf8;">[Quản trị]</a>' : '') +
+      '<a href="#" id="headerLogoutBtn" class="top-login-link" style="color:#f87171;">Đăng xuất</a>';
+
+    var logoutBtn = document.getElementById("headerLogoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        localStorage.removeItem("cms_auth_user");
+        localStorage.removeItem("carModelStoreCurrentUser");
+        alert("Đã đăng xuất tài khoản!");
+        window.location.reload();
+      });
+    }
+  }
+}
+
+// ==========================================
+// QUẢN LÝ GIỎ HÀNG (PERSISTENT CART STORAGE - CHỈ KHI ĐĂNG NHẬP)
+// ==========================================
+function getCartStorageKey() {
+  var user = getCurrentUser();
+  // Chỉ khi đã đăng nhập mới có khóa lưu giỏ hàng
+  return (user && user.email) ? "cms_cart_" + user.email.toLowerCase() : null;
+}
+
+function getCartItems() {
+  var user = getCurrentUser();
+  if (!user || !user.email) return [];
+  try {
+    var key = getCartStorageKey();
+    if (!key) return [];
+    return JSON.parse(localStorage.getItem(key) || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveCartItems(items) {
+  var user = getCurrentUser();
+  if (!user || !user.email) return false;
+  var key = getCartStorageKey();
+  if (!key) return false;
+  localStorage.setItem(key, JSON.stringify(items || []));
+  updateHeaderCartBadge();
+  return true;
+}
+
+function updateHeaderCartBadge() {
+  var user = getCurrentUser();
+  var totalQty = 0;
+  if (user && user.email) {
+    var items = getCartItems();
+    totalQty = items.reduce(function (sum, it) { return sum + (Number(it.quantity) || 1); }, 0);
+  }
+  document.querySelectorAll(".cart-badge, .cart-pill").forEach(function (badge) {
+    badge.textContent = totalQty;
+  });
+}
 
 function getWishlist() {
   try {

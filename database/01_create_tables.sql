@@ -68,7 +68,8 @@ CREATE TABLE products (
     reviews INT DEFAULT 0,
     created_at DATETIME DEFAULT GETDATE(),
 
-    CONSTRAINT fk_products_brands FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE SET NULL
+    CONSTRAINT fk_products_brands FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE SET NULL,
+    CONSTRAINT CK_products_stock_quantity CHECK (stock_quantity >= 0)
 );
 GO
 
@@ -94,14 +95,20 @@ CREATE TABLE orders (
     id INT IDENTITY(1,1) PRIMARY KEY,
     order_code VARCHAR(30) NOT NULL UNIQUE,
     customer_id INT NOT NULL,
+    customer_name NVARCHAR(100) NULL,
+    customer_email VARCHAR(100) NULL,
+    customer_phone VARCHAR(15) NULL,
     recipient_name NVARCHAR(100) NOT NULL,
     recipient_phone VARCHAR(15) NOT NULL,
     shipping_address NVARCHAR(MAX) NOT NULL,
     total_amount DECIMAL(14, 2) NOT NULL DEFAULT 0,
-    order_status NVARCHAR(20) CHECK (order_status IN ('pending', 'confirmed', 'shipping', 'delivered', 'cancelled')) DEFAULT 'pending',
+    tracking_code VARCHAR(50) NULL,
+    order_status NVARCHAR(20) DEFAULT 'pending',
     created_at DATETIME DEFAULT GETDATE(),
     
-    CONSTRAINT fk_orders_users FOREIGN KEY (customer_id) REFERENCES users(id)
+    CONSTRAINT fk_orders_users FOREIGN KEY (customer_id) REFERENCES users(id),
+    CONSTRAINT UQ_orders_tracking_code UNIQUE (tracking_code),
+    CONSTRAINT CK_orders_order_status CHECK (order_status IN ('pending', 'confirmed', 'shipping', 'delivered', 'completed', 'cancelled'))
 );
 GO
 
@@ -117,4 +124,41 @@ CREATE TABLE order_items (
     CONSTRAINT fk_items_orders FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     CONSTRAINT fk_items_products FOREIGN KEY (product_id) REFERENCES products(id)
 );
+GO
+
+-- 8. Bảng Vận đơn & Hành trình giao hàng (shipments)
+IF OBJECT_ID('shipments', 'U') IS NULL
+CREATE TABLE shipments (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    order_id INT NOT NULL,
+    tracking_code VARCHAR(50) NOT NULL UNIQUE,
+    carrier NVARCHAR(100) NOT NULL DEFAULT N'VNPost Tiết Kiệm',
+    shipping_status NVARCHAR(50) NOT NULL DEFAULT N'pending',
+    current_location NVARCHAR(255) NULL,
+    estimated_delivery DATETIME NULL,
+    notes NVARCHAR(MAX) NULL,
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
+
+    CONSTRAINT fk_shipments_orders FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+GO
+
+-- 9. Chỉ mục (Indexes) tối ưu hóa tra cứu
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_orders_tracking_code')
+    CREATE NONCLUSTERED INDEX idx_orders_tracking_code ON orders(tracking_code);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_orders_customer_id')
+    CREATE NONCLUSTERED INDEX idx_orders_customer_id ON orders(customer_id);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_order_items_order_id')
+    CREATE NONCLUSTERED INDEX idx_order_items_order_id ON order_items(order_id);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_order_items_product_id')
+    CREATE NONCLUSTERED INDEX idx_order_items_product_id ON order_items(product_id);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_shipments_order_id')
+    CREATE NONCLUSTERED INDEX idx_shipments_order_id ON shipments(order_id);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_products_brand_id')
+    CREATE NONCLUSTERED INDEX idx_products_brand_id ON products(brand_id);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_products_scale')
+    CREATE NONCLUSTERED INDEX idx_products_scale ON products(scale);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_products_car_brand')
+    CREATE NONCLUSTERED INDEX idx_products_car_brand ON products(car_brand);
 GO

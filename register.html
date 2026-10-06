@@ -116,9 +116,10 @@
             </div>
         </div>
     </footer>
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
     <script>
-        document.querySelector('form[action="login.html"]').addEventListener('submit', function(e) {
+        document.querySelector('form[action="login.html"]').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const fullname = document.getElementById('fullname').value.trim();
@@ -130,38 +131,72 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('carModelStoreUsers')) || [];
-
-            // Kiểm tra email đã tồn tại
-            const existed = users.find(user => (user.email || '').toLowerCase() === email.toLowerCase());
-
-            if (existed) {
-                alert('Email này đã được đăng ký!');
-                return;
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Đang xử lý đăng ký...';
             }
 
-            // Lưu tài khoản
-            const newUser = {
-                fullname: fullname,
-                email: email,
-                password: password,
-                role: 'customer'
-            };
-            users.push(newUser);
+            try {
+                // 1. Gửi yêu cầu đăng ký lên Backend để lưu trực tiếp vào CƠ SỞ DỮ LIỆU SQL SERVER
+                let registeredUser = null;
+                const res = await apiFetch('/api/auth/register', {
+                    method: 'POST',
+                    body: {
+                        fullname: fullname,
+                        email: email,
+                        password: password
+                    }
+                });
 
-            localStorage.setItem('carModelStoreUsers', JSON.stringify(users));
+                if (res.ok && res.data && res.data.success) {
+                    registeredUser = res.data.user;
+                } else if (res.data && res.data.message) {
+                    alert(res.data.message);
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Đăng ký';
+                    }
+                    return;
+                }
 
-            // Đồng bộ phiên cho hệ thống auth
-            localStorage.setItem('cms_auth_user', JSON.stringify({
-                email: email,
-                name: fullname,
-                role: 'customer'
-            }));
+                // 2. Đồng bộ bản sao dự phòng vào LocalStorage
+                let users = JSON.parse(localStorage.getItem('carModelStoreUsers')) || [];
+                const existedIdx = users.findIndex(u => (u.email || '').toLowerCase() === email.toLowerCase());
+                const userObj = {
+                    id: registeredUser ? registeredUser.id : undefined,
+                    fullname: fullname,
+                    email: email,
+                    password: password,
+                    role: registeredUser ? registeredUser.role : 'customer'
+                };
+                if (existedIdx !== -1) {
+                    users[existedIdx] = userObj;
+                } else {
+                    users.push(userObj);
+                }
+                localStorage.setItem('carModelStoreUsers', JSON.stringify(users));
 
-            alert('Đăng ký tài khoản thành công!');
+                // Lưu thông tin phiên đăng nhập
+                localStorage.setItem('cms_auth_user', JSON.stringify({
+                    id: registeredUser ? registeredUser.id : undefined,
+                    email: email,
+                    name: fullname,
+                    role: userObj.role
+                }));
+                localStorage.setItem('carModelStoreCurrentUser', JSON.stringify(userObj));
 
-            // Chuyển sang trang đăng nhập
-            window.location.href = 'login.html';
+                alert('Đăng ký tài khoản thành công! Dữ liệu đã được lưu an toàn vào Cơ sở dữ liệu.');
+                window.location.href = 'login.html';
+            } catch (err) {
+                console.error('Lỗi khi đăng ký:', err);
+                alert('Có lỗi xảy ra trong quá trình xử lý đăng ký!');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Đăng ký';
+                }
+            }
         });
     </script>
 </body>

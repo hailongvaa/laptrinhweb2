@@ -367,6 +367,133 @@
             </div>
         </div>
     </footer>
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterForm = document.querySelector('.filter-panel form');
+            const productGrid = document.querySelector('[data-product-grid]');
+            const countText = document.querySelector('.admin-toolbar .text-muted');
+            if (!productGrid) return;
+
+            const cards = Array.from(productGrid.querySelectorAll('.car-card'));
+
+            // Đọc params từ URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedBrands = urlParams.getAll('brand').map(b => b.toLowerCase());
+            const selectedScales = urlParams.getAll('scale').map(s => s.toLowerCase());
+            const selectedPrice = urlParams.get('price');
+            const searchQuery = (urlParams.get('q') || '').toLowerCase().trim();
+
+            // Đồng bộ trạng thái checkbox/radio theo URL params
+            if (filterForm) {
+                if (selectedBrands.length > 0) {
+                    filterForm.querySelectorAll('input[name="brand"]').forEach(cb => {
+                        cb.checked = selectedBrands.includes(cb.value.toLowerCase());
+                    });
+                }
+                if (selectedScales.length > 0) {
+                    filterForm.querySelectorAll('input[name="scale"]').forEach(cb => {
+                        cb.checked = selectedScales.includes(cb.value.toLowerCase());
+                    });
+                }
+                if (selectedPrice) {
+                    const priceRadio = filterForm.querySelector(`input[name="price"][value="${selectedPrice}"]`);
+                    if (priceRadio) priceRadio.checked = true;
+                }
+
+                // Lắng nghe submit để filter mượt mà client-side và cập nhật URL
+                filterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    applyFilter();
+                });
+
+                // Tự động lọc khi thay đổi checkbox/radio
+                filterForm.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('change', applyFilter);
+                });
+            }
+
+            function parsePrice(text) {
+                const cleaned = text.replace(/[^\d]/g, '');
+                return parseInt(cleaned, 10) || 0;
+            }
+
+            function applyFilter() {
+                let brands = [];
+                let scales = [];
+                let priceRange = null;
+
+                if (filterForm) {
+                    brands = Array.from(filterForm.querySelectorAll('input[name="brand"]:checked')).map(cb => cb.value.toLowerCase());
+                    scales = Array.from(filterForm.querySelectorAll('input[name="scale"]:checked')).map(cb => cb.value.toLowerCase());
+                    const checkedPrice = filterForm.querySelector('input[name="price"]:checked');
+                    if (checkedPrice) priceRange = checkedPrice.value;
+                }
+
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const brandBadge = card.querySelector('.brand-badge');
+                    const carName = card.querySelector('.car-card__name');
+                    const scaleLabel = card.querySelector('.scale-label');
+                    const priceTag = card.querySelector('.price-tag');
+
+                    const brandText = (brandBadge ? brandBadge.textContent : '').toLowerCase().trim();
+                    const nameText = (carName ? carName.textContent : '').toLowerCase().trim();
+                    const scaleText = (scaleLabel ? scaleLabel.textContent : '').toLowerCase().trim();
+                    const priceVal = priceTag ? parsePrice(priceTag.textContent) : 0;
+
+                    // 1. Kiểm tra hãng
+                    let matchBrand = true;
+                    if (brands.length > 0) {
+                        matchBrand = brands.some(b => {
+                            if (b === 'mercedes') return brandText.includes('mercedes');
+                            return brandText.includes(b);
+                        });
+                    }
+
+                    // 2. Kiểm tra tỉ lệ
+                    let matchScale = true;
+                    if (scales.length > 0) {
+                        matchScale = scales.some(s => {
+                            const formatted = s.replace('-', ':');
+                            return scaleText.includes(formatted) || scaleText.includes(s);
+                        });
+                    }
+
+                    // 3. Kiểm tra giá
+                    let matchPrice = true;
+                    if (priceRange === 'under1') {
+                        matchPrice = priceVal < 1000000;
+                    } else if (priceRange === '1-2') {
+                        matchPrice = priceVal >= 1000000 && priceVal <= 2000000;
+                    } else if (priceRange === 'over2') {
+                        matchPrice = priceVal > 2000000;
+                    }
+
+                    // 4. Kiểm tra từ khóa tìm kiếm (nếu có từ URL header search)
+                    let matchSearch = true;
+                    if (searchQuery) {
+                        matchSearch = nameText.includes(searchQuery) || brandText.includes(searchQuery) || scaleText.includes(searchQuery);
+                    }
+
+                    if (matchBrand && matchScale && matchPrice && matchSearch) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (countText) {
+                    countText.textContent = `Hiển thị ${visibleCount} mô hình`;
+                }
+            }
+
+            // Chạy filter ngay lúc khởi tạo
+            applyFilter();
+        });
+    </script>
 </body>
 </html>

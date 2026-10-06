@@ -457,7 +457,9 @@
                     <div style="display:flex; gap:0.75rem; margin-top:0.4rem;">
                         <select id="updateStatusSelect" class="form-control" style="flex:1;">
                             <option value="pending">Chờ xử lý</option>
+                            <option value="confirmed">Đã xác nhận</option>
                             <option value="shipping">Đang giao</option>
+                            <option value="delivered">Đã giao</option>
                             <option value="completed">Đã hoàn thành</option>
                             <option value="cancelled">Đã hủy</option>
                         </select>
@@ -495,7 +497,9 @@
 
                         var statusMap = {
                             'pending': { text: 'Chờ xử lý', class: 'badge--warning' },
+                            'confirmed': { text: 'Đã xác nhận', class: 'badge--info' },
                             'shipping': { text: 'Đang giao', class: 'badge--info' },
+                            'delivered': { text: 'Đã giao', class: 'badge--success' },
                             'completed': { text: 'Đã hoàn thành', class: 'badge--success' },
                             'cancelled': { text: 'Đã hủy', class: 'badge--danger' }
                         };
@@ -536,6 +540,8 @@
                         });
                         tbody.innerHTML = html;
                         bindViewButtons();
+                        updateTabCounts();
+                        filterOrders();
                     }
                 } catch (e) {
                     console.warn('Không thể nạp đơn hàng từ CSDL:', e);
@@ -576,40 +582,6 @@
 
             fetchRealOrders();
 
-            var modal = document.getElementById('orderModal');
-            var closeButtons = document.querySelectorAll('.js-close-modal');
-
-            // Mở modal xem chi tiết đơn
-            var viewButtons = document.querySelectorAll('.js-view-order');
-            viewButtons.forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    currentActiveRow = row;
-
-                    var orderId = row.getAttribute('data-order-id');
-                    var customer = row.getAttribute('data-customer');
-                    var phone = row.getAttribute('data-phone');
-                    var address = row.getAttribute('data-address');
-                    var payment = row.getAttribute('data-payment');
-                    var items = row.getAttribute('data-items');
-                    var total = row.getAttribute('data-total');
-                    var status = row.getAttribute('data-status');
-
-                    document.getElementById('modalOrderTitle').textContent = 'Chi Tiết Đơn Hàng ' + orderId;
-                    document.getElementById('modalCustomerName').textContent = customer;
-                    document.getElementById('modalCustomerPhone').textContent = phone;
-                    document.getElementById('modalAddress').textContent = address;
-                    document.getElementById('modalPayment').textContent = payment;
-                    document.getElementById('modalOrderTotal').textContent = total;
-                    document.getElementById('modalItemsList').textContent = items;
-
-                    var statusSelect = document.getElementById('updateStatusSelect');
-                    if (statusSelect) statusSelect.value = status;
-
-                    modal.classList.add('is-active');
-                });
-            });
-
             // Đóng modal
             closeButtons.forEach(function (btn) {
                 btn.addEventListener('click', function () {
@@ -623,31 +595,81 @@
                 }
             });
 
-            // Lưu cập nhật trạng thái đơn hàng
+            // Lưu cập nhật trạng thái đơn hàng (gửi lên API và cập nhật CSDL)
             var saveStatusBtn = document.getElementById('saveOrderStatusBtn');
             if (saveStatusBtn) {
-                saveStatusBtn.addEventListener('click', function () {
+                saveStatusBtn.addEventListener('click', async function () {
                     if (!currentActiveRow) return;
 
                     var newStatus = document.getElementById('updateStatusSelect').value;
                     var pill = currentActiveRow.querySelector('.js-status-pill');
+                    var orderCode = (currentActiveRow.getAttribute('data-order-id') || '').replace(/^#/, '');
 
                     var statusMap = {
                         'pending': { text: 'Chờ xử lý', class: 'badge--warning' },
+                        'confirmed': { text: 'Đã xác nhận', class: 'badge--info' },
                         'shipping': { text: 'Đang giao', class: 'badge--info' },
+                        'delivered': { text: 'Đã giao', class: 'badge--success' },
                         'completed': { text: 'Đã hoàn thành', class: 'badge--success' },
                         'cancelled': { text: 'Đã hủy', class: 'badge--danger' }
                     };
 
-                    var conf = statusMap[newStatus];
-                    if (conf && pill) {
-                        currentActiveRow.setAttribute('data-status', newStatus);
-                        pill.className = 'badge ' + conf.class + ' js-status-pill';
-                        pill.textContent = conf.text;
-                        alert('Đã cập nhật trạng thái đơn ' + currentActiveRow.getAttribute('data-order-id') + ' thành: "' + conf.text + '"!');
+                    saveStatusBtn.disabled = true;
+                    saveStatusBtn.textContent = 'Đang lưu...';
+
+                    try {
+                        var res = await apiFetch('/api/orders/' + encodeURIComponent(orderCode) + '/status', {
+                            method: 'PUT',
+                            body: JSON.stringify({ status: newStatus })
+                        });
+
+                        var conf = statusMap[newStatus];
+
+                        if (res.ok && res.data && res.data.success) {
+                            if (conf && pill) {
+                                currentActiveRow.setAttribute('data-status', newStatus);
+                                pill.className = 'badge ' + conf.class + ' js-status-pill';
+                                pill.textContent = conf.text;
+                            }
+                            alert('Đã cập nhật trạng thái đơn #' + orderCode + ' thành: "' + (conf ? conf.text : newStatus) + '" trên máy chủ!');
+                            await fetchRealOrders();
+                        } else {
+                            var errMsg = (res.data && (res.data.error || res.data.message)) || 'Không thể cập nhật trạng thái đơn hàng trên máy chủ.';
+                            alert('Lỗi: ' + errMsg);
+                        }
+                    } catch (e) {
+                        alert('Lỗi kết nối máy chủ: ' + e.message);
+                    } finally {
+                        saveStatusBtn.disabled = false;
+                        saveStatusBtn.textContent = 'Lưu trạng thái';
                         modal.classList.remove('is-active');
                     }
                 });
+            }
+
+            // Cập nhật số lượng đếm trên các Tabs trạng thái
+            function updateTabCounts() {
+                var rows = document.querySelectorAll('#ordersTable tbody tr');
+                var counts = { all: rows.length, pending: 0, shipping: 0, completed: 0, cancelled: 0 };
+                rows.forEach(function (r) {
+                    var st = (r.getAttribute('data-status') || '').toLowerCase();
+                    if (st === 'pending' || st === 'confirmed') counts.pending++;
+                    else if (st === 'shipping') counts.shipping++;
+                    else if (st === 'completed' || st === 'delivered') counts.completed++;
+                    else if (st === 'cancelled') counts.cancelled++;
+                });
+
+                var tabAll = document.querySelector('#orderStatusTabs [data-status="all"]');
+                var tabPending = document.querySelector('#orderStatusTabs [data-status="pending"]');
+                var tabShipping = document.querySelector('#orderStatusTabs [data-status="shipping"]');
+                var tabCompleted = document.querySelector('#orderStatusTabs [data-status="completed"]');
+                var tabCancelled = document.querySelector('#orderStatusTabs [data-status="cancelled"]');
+
+                if (tabAll) tabAll.textContent = 'Tất cả (' + counts.all + ')';
+                if (tabPending) tabPending.textContent = 'Chờ xử lý (' + counts.pending + ')';
+                if (tabShipping) tabShipping.textContent = 'Đang giao (' + counts.shipping + ')';
+                if (tabCompleted) tabCompleted.textContent = 'Đã hoàn thành (' + counts.completed + ')';
+                if (tabCancelled) tabCancelled.textContent = 'Đã hủy (' + counts.cancelled + ')';
             }
 
             // Bộ lọc Tabs trạng thái
@@ -657,14 +679,28 @@
             function filterOrders() {
                 var activeTab = document.querySelector('#orderStatusTabs .filter-tab.active');
                 var currentStatus = activeTab ? activeTab.getAttribute('data-status') : 'all';
-                var query = (searchInput.value || '').trim().toLowerCase();
+                var query = (searchInput ? searchInput.value || '' : '').trim().toLowerCase();
 
                 var rows = document.querySelectorAll('#ordersTable tbody tr');
                 rows.forEach(function (r) {
-                    var rStatus = r.getAttribute('data-status');
+                    var rStatus = (r.getAttribute('data-status') || '').toLowerCase();
                     var rText = r.textContent.toLowerCase();
 
-                    var matchesStatus = (currentStatus === 'all') || (rStatus === currentStatus);
+                    var matchesStatus = false;
+                    if (currentStatus === 'all') {
+                        matchesStatus = true;
+                    } else if (currentStatus === 'pending') {
+                        matchesStatus = (rStatus === 'pending' || rStatus === 'confirmed');
+                    } else if (currentStatus === 'shipping') {
+                        matchesStatus = (rStatus === 'shipping');
+                    } else if (currentStatus === 'completed') {
+                        matchesStatus = (rStatus === 'completed' || rStatus === 'delivered');
+                    } else if (currentStatus === 'cancelled') {
+                        matchesStatus = (rStatus === 'cancelled');
+                    } else {
+                        matchesStatus = (rStatus === currentStatus);
+                    }
+
                     var matchesQuery = !query || (rText.indexOf(query) !== -1);
 
                     if (matchesStatus && matchesQuery) {
@@ -686,6 +722,9 @@
             if (searchInput) {
                 searchInput.addEventListener('input', filterOrders);
             }
+
+            // Gọi đếm ban đầu khi trang tải xong
+            updateTabCounts();
         });
     </script>
 </body>

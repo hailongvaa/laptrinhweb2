@@ -98,6 +98,52 @@
             </div>
         </div>
 
+        <!-- TRA CỨU HÀNH TRÌNH VẬN ĐƠN & ĐƠN HÀNG -->
+        <div class="form-card form-card--wide" style="margin-top:2rem;">
+            <h2 style="margin-top:0; font-size:1.3rem; display:flex; align-items:center; gap:8px;">
+                <span>📦</span> Tra cứu mã vận đơn &amp; Đơn hàng
+            </h2>
+            <p class="text-muted" style="margin-bottom:1rem; font-size:0.9rem;">
+                Nhập mã vận đơn (VD: <code>VNPOST-ORD-2026-0001</code>) hoặc mã đơn hàng (VD: <code>ORD-2026-0001</code>) để tra cứu tiến độ vận chuyển và chi tiết kiện hàng.
+            </p>
+            <form id="trackingLookupForm" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1rem;">
+                <input type="text" id="trackingCodeInput" placeholder="Nhập mã vận đơn / mã đơn hàng..." required style="flex:1; min-width:240px; padding:0.6rem 0.8rem; border:1px solid #cbd5e1; border-radius:4px; font-size:0.95rem;">
+                <button type="submit" id="btnTrackOrder" class="btn btn-primary" style="padding:0.6rem 1.25rem;">Tra cứu ngay</button>
+            </form>
+
+            <div id="trackingAlert" style="display:none; padding:0.75rem 1rem; border-radius:4px; font-size:0.9rem; margin-bottom:1rem;"></div>
+
+            <div id="trackingResultBox" style="display:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem; margin-bottom:0.75rem; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <div style="font-size:0.8rem; color:#64748b; text-transform:uppercase; font-weight:700;">Mã vận đơn</div>
+                        <div id="trackResTrackingCode" style="font-size:1.15rem; font-weight:700; color:#16a34a; font-family:monospace;"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.8rem; color:#64748b; text-transform:uppercase; font-weight:700;">Mã đơn hàng</div>
+                        <div id="trackResOrderCode" style="font-size:1.15rem; font-weight:700; color:#2563eb; font-family:monospace;"></div>
+                    </div>
+                    <div>
+                        <span id="trackResStatusBadge" style="display:inline-block; padding:4px 12px; border-radius:999px; font-weight:600; font-size:0.85rem;"></span>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem; font-size:0.88rem;">
+                    <div><strong>Đơn vị vận chuyển:</strong> <span id="trackResCarrier">VNPost</span></div>
+                    <div><strong>Vị trí hiện tại:</strong> <span id="trackResLocation">Chưa cập nhật</span></div>
+                    <div><strong>Dự kiến giao:</strong> <span id="trackResEstDate">Đang cập nhật</span></div>
+                    <div><strong>Người nhận:</strong> <span id="trackResRecipient">---</span></div>
+                    <div><strong>Tổng thanh toán:</strong> <span id="trackResTotal" style="color:#dc2626; font-weight:700;">---</span></div>
+                    <div><strong>Ghi chú bưu tá:</strong> <span id="trackResNotes">---</span></div>
+                </div>
+
+                <div style="border-top:1px dashed #cbd5e1; padding-top:0.75rem;">
+                    <div style="font-weight:700; font-size:0.88rem; margin-bottom:6px;">Sản phẩm trong kiện hàng:</div>
+                    <ul id="trackResItemsList" style="margin:0; padding-left:1.25rem; font-size:0.88rem; color:#334155;"></ul>
+                </div>
+            </div>
+        </div>
+
         <!-- BẢN ĐỒ SHOWROOM GOOGLE MAPS -->
         <section class="map-card" aria-labelledby="map-title">
             <div class="map-card__head">
@@ -153,5 +199,98 @@
     </footer>
     <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const trackingForm = document.getElementById('trackingLookupForm');
+            const codeInput = document.getElementById('trackingCodeInput');
+            const btnTrack = document.getElementById('btnTrackOrder');
+            const alertBox = document.getElementById('trackingAlert');
+            const resultBox = document.getElementById('trackingResultBox');
+
+            if (!trackingForm) return;
+
+            // Kiểm tra xem trên URL có param ?code= không
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryCode = urlParams.get('code') || urlParams.get('tracking');
+            if (queryCode && codeInput) {
+                codeInput.value = queryCode.trim();
+                doTrack(queryCode.trim());
+            }
+
+            trackingForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const code = (codeInput.value || '').trim();
+                if (!code) return;
+                doTrack(code);
+            });
+
+            async function doTrack(code) {
+                btnTrack.disabled = true;
+                btnTrack.textContent = 'Đang tra cứu...';
+                alertBox.style.display = 'none';
+                resultBox.style.display = 'none';
+
+                try {
+                    const res = await apiFetch('/api/tracking/' + encodeURIComponent(code));
+                    btnTrack.disabled = false;
+                    btnTrack.textContent = 'Tra cứu ngay';
+
+                    if (res.ok && res.data && res.data.success && res.data.data) {
+                        const d = res.data.data;
+                        document.getElementById('trackResTrackingCode').textContent = d.tracking_code || 'Chưa gán mã vận đơn';
+                        document.getElementById('trackResOrderCode').textContent = d.order_code;
+
+                        // Badge trạng thái
+                        const badge = document.getElementById('trackResStatusBadge');
+                        const statusMap = {
+                            'pending': { text: 'Chờ đóng gói', bg: '#fef3c7', color: '#92400e' },
+                            'in_transit': { text: 'Đang vận chuyển', bg: '#e0f2fe', color: '#0369a1' },
+                            'delivered': { text: 'Giao thành công', bg: '#dcfce7', color: '#15803d' },
+                            'cancelled': { text: 'Đã hủy', bg: '#fee2e2', color: '#b91c1c' }
+                        };
+                        const shipSt = statusMap[d.shipping_status] || { text: d.shipping_status || d.order_status, bg: '#f1f5f9', color: '#334155' };
+                        badge.textContent = shipSt.text;
+                        badge.style.background = shipSt.bg;
+                        badge.style.color = shipSt.color;
+
+                        document.getElementById('trackResCarrier').textContent = d.carrier || 'VNPost Tiết Kiệm';
+                        document.getElementById('trackResLocation').textContent = d.current_location || 'Trung tâm xử lý đơn hàng';
+                        document.getElementById('trackResEstDate').textContent = d.estimated_delivery ? new Date(d.estimated_delivery).toLocaleDateString('vi-VN') : 'Dự kiến 2-3 ngày tới';
+                        document.getElementById('trackResRecipient').textContent = `${d.recipient_name || ''} (${d.recipient_phone || ''})`;
+                        document.getElementById('trackResTotal').textContent = Number(d.total_amount).toLocaleString('vi-VN') + 'đ';
+                        document.getElementById('trackResNotes').textContent = d.shipment_notes || 'Kiện hàng đang được bảo quản và vận chuyển an toàn';
+
+                        // Danh sách xe mô hình
+                        const listEl = document.getElementById('trackResItemsList');
+                        listEl.innerHTML = '';
+                        if (d.items && d.items.length > 0) {
+                            d.items.forEach(it => {
+                                const li = document.createElement('li');
+                                li.style.marginBottom = '4px';
+                                li.innerHTML = `<strong>${it.product_name || 'Xe mô hình'}</strong> (Tỉ lệ: ${it.scale || '1:18'}) &times; ${it.quantity} &ndash; Đơn giá: ${Number(it.unit_price).toLocaleString('vi-VN')}đ`;
+                                listEl.appendChild(li);
+                            });
+                        } else {
+                            listEl.innerHTML = '<li>Chi tiết kiện hàng mô hình tiêu chuẩn</li>';
+                        }
+
+                        resultBox.style.display = 'block';
+                    } else {
+                        alertBox.style.display = 'block';
+                        alertBox.style.background = '#fee2e2';
+                        alertBox.style.color = '#991b1b';
+                        alertBox.textContent = (res.data && res.data.message) || `Không tìm thấy mã vận đơn "${code}". Hãy kiểm tra lại hoặc liên hệ hotline 1900-6868!`;
+                    }
+                } catch (err) {
+                    btnTrack.disabled = false;
+                    btnTrack.textContent = 'Tra cứu ngay';
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = '#fee2e2';
+                    alertBox.style.color = '#991b1b';
+                    alertBox.textContent = 'Lỗi kết nối máy chủ khi tra cứu mã vận đơn.';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

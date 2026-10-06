@@ -1,18 +1,27 @@
 {
   "name": "car-store-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend API for CarModelStore",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "migrate": "node migrate.js",
+    "test": "node --test test/**/*.test.js ../test/**/*.test.js"
   },
-  "keywords": [],
+  "keywords": [
+    "carmodelstore",
+    "express",
+    "mssql",
+    "serverless"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "body-parser": "^2.3.0",
     "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "msnodesqlv8": "^5.5.0",
     "mssql": "^12.7.2"

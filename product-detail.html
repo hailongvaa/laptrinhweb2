@@ -71,7 +71,7 @@
                 <span class="brand-badge">Ferrari</span>
                 <h2 style="margin-top:.3rem;">F40 (1987)</h2>
                 <p class="star-rating"><span class="stars">★★★★★</span> 4.8 (126 đánh giá) &middot; <a href="#reviews">Xem đánh giá</a></p>
-                <p class="price-tag" style="font-size:1.6rem;">1.090.000đ</p>
+                <p class="price-tag" style="font-size:1.6rem;">2.450.000đ</p>
                 <table class="spec-table">
                     <tr><th>Hãng xe</th><td>Ferrari</td></tr>
                     <tr><th>Tỉ lệ</th><td>1:18 (phom dáng theo đúng thông số xe thật)</td></tr>
@@ -141,6 +141,129 @@
             </div>
         </div>
     </footer>
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || '1';
+
+            let loadedProduct = null;
+
+            if (id) {
+                try {
+                    const res = await apiFetch('/api/products/' + encodeURIComponent(id));
+                    if (res.ok && res.data && res.data.id) {
+                        loadedProduct = res.data;
+                        const p = res.data;
+                        const nameEl = document.querySelector('.product-detail h2');
+                        if (nameEl) nameEl.textContent = p.name;
+
+                        const titleEl = document.querySelector('.page-banner h1');
+                        if (titleEl) titleEl.textContent = `${p.brand || p.manufacturer} ${p.name} - Mô hình diecast ${p.scale}`;
+
+                        const breadcrumbBrand = document.querySelector('.page-banner .breadcrumb');
+                        if (breadcrumbBrand) {
+                            breadcrumbBrand.innerHTML = `<a href="index.html">Trang chủ</a> / <a href="products.html?brand=${encodeURIComponent(p.brand || '')}">${p.brand || 'Mô hình'}</a> / ${p.name}`;
+                        }
+
+                        const badgeEl = document.querySelector('.product-detail .brand-badge');
+                        if (badgeEl) badgeEl.textContent = p.brand || p.manufacturer || 'Siêu xe';
+
+                        const priceEl = document.querySelector('.product-detail .price-tag');
+                        if (priceEl) priceEl.textContent = Number(p.price).toLocaleString('vi-VN') + 'đ';
+
+                        const imgEl = document.querySelector('.product-detail__gallery img');
+                        if (imgEl && p.image) {
+                            imgEl.src = p.image;
+                            imgEl.alt = 'Mô hình ' + p.name;
+                        }
+
+                        const wishBtn = document.querySelector('.product-detail__gallery .wishlist-btn');
+                        if (wishBtn) wishBtn.setAttribute('data-product-id', String(p.id));
+
+                        // Cập nhật bảng thông số
+                        const tableRows = document.querySelectorAll('.spec-table tr');
+                        if (tableRows.length >= 6) {
+                            tableRows[0].querySelectorAll('td')[0].textContent = p.brand || p.manufacturer;
+                            tableRows[1].querySelectorAll('td')[0].textContent = p.scale;
+                            tableRows[3].querySelectorAll('td')[0].textContent = p.manufacturer || 'Đang cập nhật';
+                            const statusCell = tableRows[5].querySelectorAll('td')[0];
+                            if (statusCell) {
+                                if (p.stock_quantity > 0) {
+                                    statusCell.innerHTML = `<span class="status-pill status-pill--ok">Còn ${p.stock_quantity} xe trong kho</span>`;
+                                } else {
+                                    statusCell.innerHTML = `<span class="status-pill status-pill--danger" style="background:#fee2e2; color:#991b1b;">Tạm hết hàng</span>`;
+                                }
+                            }
+                        }
+
+                        if (typeof initWishlistButtons === 'function') initWishlistButtons();
+                    }
+                } catch (e) {
+                    // Giữ nguyên fallback HTML
+                }
+            }
+
+            // Xử lý nút Thêm vào giỏ hàng
+            const addToCartForm = document.querySelector('.product-detail form');
+            if (addToCartForm) {
+                addToCartForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // 1. Yêu cầu đăng nhập trước khi có giỏ hàng
+                    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+                    if (!user || !user.email) {
+                        alert('Vui lòng đăng nhập tài khoản để thêm mô hình xe vào giỏ hàng!');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const qtyInput = document.getElementById('qty');
+                    const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+
+                    // 2. Lấy thông tin sản phẩm (ưu tiên từ API loadedProduct, nếu không có đọc từ DOM)
+                    const pid = loadedProduct ? Number(loadedProduct.id) : (parseInt(urlParams.get('id'), 10) || 1);
+                    const rawName = loadedProduct ? loadedProduct.name : (document.querySelector('.product-detail h2')?.textContent.trim() || 'Ferrari F40');
+                    const brand = loadedProduct ? loadedProduct.brand : (document.querySelector('.product-detail .brand-badge')?.textContent.trim() || 'Ferrari');
+                    const fullName = rawName.toLowerCase().includes((brand || '').toLowerCase()) ? rawName : `${brand} ${rawName}`;
+                    
+                    let price = 2450000;
+                    if (loadedProduct && loadedProduct.price) {
+                        price = Number(loadedProduct.price);
+                    } else {
+                        const priceText = document.querySelector('.product-detail .price-tag')?.textContent.trim() || '';
+                        const parsed = parseInt(priceText.replace(/[^\d]/g, ''), 10);
+                        if (!isNaN(parsed) && parsed > 0) price = parsed;
+                    }
+
+                    const scale = loadedProduct ? loadedProduct.scale : (document.querySelectorAll('.spec-table tr')[1]?.querySelectorAll('td')[0]?.textContent.trim().split(' ')[0] || '1:18');
+
+                    // 3. Lấy giỏ hàng và cập nhật
+                    let cart = typeof getCartItems === 'function' ? getCartItems() : [];
+                    const existingItem = cart.find(it => Number(it.id) === pid);
+
+                    if (existingItem) {
+                        existingItem.quantity = (Number(existingItem.quantity) || 1) + qty;
+                    } else {
+                        cart.push({
+                            id: pid,
+                            name: fullName,
+                            scale: scale,
+                            price: price,
+                            quantity: qty
+                        });
+                    }
+
+                    if (typeof saveCartItems === 'function') {
+                        saveCartItems(cart);
+                    }
+
+                    alert(`Đã thêm ${qty} xe "${fullName}" vào giỏ hàng!`);
+                    window.location.href = 'cart.html';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

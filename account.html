@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Thông tin tài khoản & Đơn đã đặt | CarModel Store</title>
+</head>
+<body>
+    <!-- HEADER ĐỒNG BỘ: CÁC TRANG CHI TIẾT & CHỨC NĂNG -->
+    <header class="site-header">
+        <div class="site-header__top">
+            <div class="container header-top-flex">
+                <div class="hotline-box">
+                    <span class="phone-vibrate-icon">📞</span>
+                    <div class="hotline-text">
+                        <span class="hotline-label">Hotline tư vấn</span>
+                        <a href="tel:19006868" class="hotline-number">1900-6868</a>
+                    </div>
+                    <span class="hotline-divider">|</span>
+                    <span class="shipping-note">Giao hàng toàn quốc</span>
+                </div>
+                <div class="top-auth">
+                    <a href="login.html" class="top-login-link">Đăng nhập</a>
+                </div>
+            </div>
+        </div>
+        <div class="site-header__main">
+            <div class="container main-header-flex">
+                <a href="index.html" class="brand-logo">Car<span>Model</span>Store</a>
+                <nav class="main-nav" aria-label="Menu chính">
+                    <ul>
+                        <li><a href="index.html">Trang chủ</a></li>
+                        <li><a href="brands.html">Hãng xe</a></li>
+                        <li><a href="products.html">Sản phẩm</a></li>
+                        <li><a href="accessories.html">Phụ kiện</a></li>
+                        <li><a href="preorder.html">Sắp ra mắt</a></li>
+                        <li><a href="contact.html">Liên hệ</a></li>
+                    </ul>
+                </nav>
+                <div class="header-right-actions">
+                    <form class="search-form" action="products.html" method="get" role="search">
+                        <label for="q" class="sr-only" style="position:absolute;left:-9999px;">Tìm mô hình</label>
+                        <input type="search" id="q" name="q" placeholder="Tìm hãng xe, dòng xe, tỉ lệ...">
+                        <button type="submit">Tìm</button>
+                    </form>
+                    <a href="cart.html" class="cart-icon-btn" title="Xem giỏ hàng" aria-label="Giỏ hàng">
+                        <span class="cart-cart-symbol">🛒</span>
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-banner">
+        <div class="container">
+            <p class="breadcrumb"><a href="index.html">Trang chủ</a> / Tài khoản</p>
+            <h1 class="mt-0">Thông tin tài khoản & Đơn đã đặt</h1>
+        </div>
+    </div>
+
+    <main id="main" class="section container">
+        <div style="display:grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: start;">
+            
+            <!-- Cột trái: Hồ sơ cá nhân -->
+            <div style="background:#1e293b; border-radius:8px; padding:1.5rem; color:#fff; border:1px solid #334155;">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid #334155;">
+                    <div style="width:50px; height:50px; border-radius:50%; background:#d4af37; color:#0f172a; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:1.2rem;" id="userAvatar">U</div>
+                    <div>
+                        <h3 style="margin:0; font-size:1.1rem; color:#f8fafc;" id="userName">Họ và tên</h3>
+                        <span style="font-size:0.8rem; color:#94a3b8;" id="userRole">Khách hàng</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:1rem;">
+                    <label style="font-size:0.8rem; color:#94a3b8; display:block;">Email</label>
+                    <div style="font-weight:600; color:#e2e8f0; font-size:0.9rem;" id="userEmail">email@domain.com</div>
+                </div>
+
+                <div style="margin-bottom:1rem;">
+                    <label style="font-size:0.8rem; color:#94a3b8; display:block;">Số điện thoại</label>
+                    <div style="font-weight:600; color:#e2e8f0; font-size:0.9rem;" id="userPhone">---</div>
+                </div>
+
+                <div style="margin-bottom:1.5rem;">
+                    <label style="font-size:0.8rem; color:#94a3b8; display:block;">Địa chỉ mặc định</label>
+                    <div style="font-weight:600; color:#e2e8f0; font-size:0.9rem;" id="userAddress">---</div>
+                </div>
+
+                <a href="#" id="btnAccountLogout" class="btn btn-outline btn-block" style="text-align:center; display:block; border-color:#ef4444; color:#f87171;">Đăng xuất tài khoản</a>
+            </div>
+
+            <!-- Cột phải: Danh sách đơn hàng đã đặt và cập nhật trạng thái -->
+            <div style="background:#fff; border-radius:8px; padding:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:1px solid #e2e8f0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #e2e8f0;">
+                    <div>
+                        <h2 style="margin:0; font-size:1.3rem; color:#0f172a;">Lịch sử đơn hàng của bạn</h2>
+                        <p style="margin:0.25rem 0 0; font-size:0.85rem; color:#64748b;">Theo dõi tiến trình và trạng thái các đơn hàng của bạn</p>
+                    </div>
+                    <button type="button" id="btnRefreshOrders" class="btn btn-outline btn-sm" style="padding:0.35rem 0.75rem;">Làm mới</button>
+                </div>
+
+                <div id="accountLoading" style="text-align:center; padding:2rem; color:#64748b;">
+                    Đang nạp dữ liệu đơn hàng từ Database...
+                </div>
+
+                <div id="accountEmptyOrders" style="display:none; text-align:center; padding:3rem 1rem; color:#64748b;">
+                    <div style="font-size:3rem; margin-bottom:0.5rem;">📦</div>
+                    <h3 style="color:#1e293b; margin-bottom:0.5rem;">Bạn chưa có đơn hàng nào</h3>
+                    <p style="margin-bottom:1.25rem; font-size:0.9rem;">Hãy khám phá các mô hình xe siêu nét và đặt hàng ngay!</p>
+                    <a href="products.html" class="btn btn-primary btn-sm">Xem sản phẩm ngay</a>
+                </div>
+
+                <div class="table-wrap" id="ordersTableWrap" style="display:none;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Mã vận đơn</th>
+                                <th>Người nhận</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountOrdersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>CarModelStore</h4>
+                    <p style="font-size:.85rem;">Chuyên mô hình ô tô thu nhỏ tỉ lệ 1:18 - 1:64 cho người sưu tầm.
+                    Đồ án môn Lập trình Web &ndash; Chương 1 &amp; 2.</p>
+                </div>
+                <div>
+                    <h4>Mua sắm</h4>
+                    <ul>
+                        <li><a href="brands.html">Theo hãng xe</a></li>
+                        <li><a href="products.html">Tất cả mô hình</a></li>
+                        <li><a href="accessories.html">Phụ kiện</a></li>
+                        <li><a href="cart.html">Giỏ hàng</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Tài khoản</h4>
+                    <ul>
+                        <li><a href="account.html">Thông tin tài khoản</a></li>
+                        <li><a href="login.html">Đăng nhập</a></li>
+                        <li><a href="register.html">Đăng ký</a></li>
+                        <li><a href="wishlist.html">Yêu thích</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="contact.html">Liên hệ</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Hướng dẫn đặt hàng</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 CarModelStore &ndash; Bài tập Chương 1 &amp; 2, môn Lập trình Web. Nhóm 05.
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+            if (!user || !user.email) {
+                alert('Vui lòng đăng nhập để xem thông tin tài khoản và đơn đã đặt!');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Điền thông tin Profile
+            const dName = user.name || user.fullname || user.email.split('@')[0];
+            document.getElementById('userName').textContent = dName;
+            document.getElementById('userAvatar').textContent = dName.charAt(0).toUpperCase();
+            document.getElementById('userRole').textContent = user.role === 'admin' ? 'Quản trị viên (Admin)' : 'Khách hàng thành viên';
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userPhone').textContent = user.phone || 'Chưa cập nhật';
+            document.getElementById('userAddress').textContent = user.address || 'Chưa cập nhật';
+
+            // Nút đăng xuất
+            const logoutBtn = document.getElementById('btnAccountLogout');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('cms_auth_user');
+                    localStorage.removeItem('carModelStoreCurrentUser');
+                    alert('Đã đăng xuất tài khoản!');
+                    window.location.href = 'index.html';
+                });
+            }
+
+            // Tải danh sách đơn hàng đã đặt của user từ Database
+            async function loadUserOrders() {
+                const loading = document.getElementById('accountLoading');
+                const emptyNotice = document.getElementById('accountEmptyOrders');
+                const tableWrap = document.getElementById('ordersTableWrap');
+                const tbody = document.getElementById('accountOrdersTableBody');
+
+                loading.style.display = 'block';
+                emptyNotice.style.display = 'none';
+                tableWrap.style.display = 'none';
+
+                try {
+                    // Gọi API lấy đơn hàng theo customer_id hoặc email của user
+                    var queryParams = [];
+                    if (user.id) queryParams.push('customer_id=' + encodeURIComponent(user.id));
+                    if (user.email) queryParams.push('email=' + encodeURIComponent(user.email));
+                    var endpoint = '/api/orders' + (queryParams.length > 0 ? '?' + queryParams.join('&') : '');
+                    const res = await apiFetch(endpoint);
+
+                    loading.style.display = 'none';
+
+                    var ordersList = [];
+                    if (res.ok && res.data) {
+                        if (Array.isArray(res.data.orders)) {
+                            ordersList = res.data.orders;
+                        } else if (Array.isArray(res.data)) {
+                            ordersList = res.data;
+                        }
+                    }
+
+                    if (ordersList.length > 0) {
+                        tableWrap.style.display = 'block';
+                        const statusMap = {
+                            'pending': { text: 'Chờ xử lý', color: '#b45309', bg: '#fef3c7' },
+                            'confirmed': { text: 'Đã xác nhận', color: '#1d4ed8', bg: '#dbeafe' },
+                            'shipping': { text: 'Đang giao', color: '#0369a1', bg: '#e0f2fe' },
+                            'delivered': { text: 'Đã giao', color: '#15803d', bg: '#dcfce7' },
+                            'completed': { text: 'Đã hoàn thành', color: '#15803d', bg: '#dcfce7' },
+                            'cancelled': { text: 'Đã hủy', color: '#b91c1c', bg: '#fee2e2' }
+                        };
+
+                        let html = '';
+                        ordersList.forEach(o => {
+                            const st = statusMap[o.order_status] || { text: o.order_status || 'Chờ xử lý', color: '#b45309', bg: '#fef3c7' };
+                            const trackCode = o.tracking_code || '---';
+                            html += `
+                                <tr data-order-code="${o.order_code}">
+                                    <td><strong style="color:#d4af37; font-family:monospace;">${o.order_code}</strong></td>
+                                    <td><a href="contact.html" title="Tra cứu hành trình" style="color:#0284c7; text-decoration:underline;">${trackCode}</a></td>
+                                    <td>
+                                        <div><strong>${o.recipient_name || dName}</strong></div>
+                                        <small style="color:#64748b;">${o.recipient_phone || ''}</small>
+                                    </td>
+                                    <td><strong style="color:#dc2626;">${Number(o.total_amount || 0).toLocaleString('vi-VN')}đ</strong></td>
+                                    <td>
+                                        <span class="status-badge" style="padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:600; background:${st.bg}; color:${st.color};">
+                                            ${st.text}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        tbody.innerHTML = html;
+                    } else {
+                        emptyNotice.style.display = 'block';
+                    }
+                } catch (e) {
+                    loading.style.display = 'none';
+                    emptyNotice.style.display = 'block';
+                    console.error('Lỗi khi nạp đơn hàng:', e);
+                }
+            }
+
+            loadUserOrders();
+
+            var btnRefresh = document.getElementById('btnRefreshOrders');
+            if (btnRefresh) {
+                btnRefresh.addEventListener('click', loadUserOrders);
+            }
+        });
+    </script>
+</body>
+</html>

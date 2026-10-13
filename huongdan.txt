@@ -1,0 +1,70 @@
+================================================================================
+          HƯỚNG DẪN MỞ SERVER & CHẠY WEBSITE CARMODELSTORE TRÊN LOCALHOST
+================================================================================
+
+YÊU CẦU TRƯỚC KHI CHẠY:
+- Máy tính đã cài Node.js (https://nodejs.org)
+- Máy tính đã cài SQL Server (hoặc SQL Server Express)
+
+--------------------------------------------------------------------------------
+BƯỚC 1: CLONE DỰ ÁN VỀ 
+--------------------------------------------------------------------------------
+mở CMD lên và nhập lệnh:
+
+git clone https://github.com/hailongvaa/laptrinhweb2.git
+
+tiếp theo:
+
+cd laptrinhweb2
+
+
+--------------------------------------------------------------------------------
+BƯỚC 2: CÀI ĐẶT THƯ VIỆN & NẠP CƠ SỞ DỮ LIỆU (CHỈ CẦN LÀM 1 LẦN ĐẦU)
+--------------------------------------------------------------------------------
+(Copy nguyên dòng lệnh gộp dưới đây dán vào CMD rồi Enter):
+
+cd car-store-backend && npm install && if not exist .env copy .env.example .env && cd .. && npm run migrate
+
+
+--------------------------------------------------------------------------------
+BƯỚC 3: KHỞI ĐỘNG SERVER
+--------------------------------------------------------------------------------
+(Copy dòng lệnh này dán vào CMD rồi Enter):
+
+npm start
+
+Khi thấy thông báo:
+"🚀 Backend CarModelStore đang chạy tại: http://localhost:5000"
+"✅ Đã kết nối SQL Server thành công"
+=> Đã bật server thành công! GIỮ NGUYÊN CỬA SỔ CMD NÀY (KHÔNG TẮT).
+
+
+--------------------------------------------------------------------------------
+BƯỚC 4: MỞ WEBSITE TRÊN TRÌNH DUYỆT (CHROME / EDGE / CỐC CỐC)
+--------------------------------------------------------------------------------
+Cách 1: Nhập trực tiếp các link sau vào trình duyệt:
+- Trang chủ cửa hàng:     http://localhost:5000
+- Giỏ hàng & Đặt hàng:    http://localhost:5000/cart.html
+- Thông tin tài khoản:    http://localhost:5000/account.html
+- Tra cứu vận đơn:        http://localhost:5000/contact.html
+- Bảng điều khiển Admin:  http://localhost:5000/admin/dashboard.html
+- Quản lý đơn hàng Admin: http://localhost:5000/admin/orders.html
+
+Cách 2: Mở nhanh bằng lệnh CMD (mở 1 cửa sổ CMD mới dán vào):
+start http://localhost:5000
+start http://localhost:5000/admin/dashboard.html
+
+
+--------------------------------------------------------------------------------
+BƯỚC 5: TÀI KHOẢN ĐĂNG NHẬP MẪU ĐỂ TEST
+--------------------------------------------------------------------------------
+1. Tài khoản Quản trị viên (Admin):
+   - Email: admin@gmail.com
+   - Mật khẩu: 123456
+   (Có quyền duyệt đơn hàng, đổi trạng thái đơn, xem doanh thu)
+
+2. Tài khoản Khách hàng:
+   - Email: nguyenvanan@gmail.com
+   - Mật khẩu: 123456
+   (Đã có sẵn danh sách đơn hàng đã mua để xem tại trang tài khoản)
+================================================================================

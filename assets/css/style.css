@@ -1451,3 +1451,19 @@ a { color: inherit; text-decoration: none; }
   height: 100%;
   border: 0;
 }
+
+/* ==========================================================
+   BỔ SUNG RESPONSIVE & LAYOUT AUDIT CHO TÀI KHOẢN & PHỤ KIỆN
+   ========================================================== */
+@media (max-width: 860px) {
+  .account-grid-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .accessories-grid-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

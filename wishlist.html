@@ -85,6 +85,7 @@
             emptyMessage.style.display = "none";
 
             wishlistGrid.innerHTML = wishlist.map(function (id) {
+                var detailHref = (!isNaN(Number(id)) && Number(id) > 0) ? ('product-detail.html?id=' + encodeURIComponent(id)) : 'product-detail.html';
                 return `
                     <article class="car-card">
                         <div class="car-card__media">
@@ -96,13 +97,14 @@
                             <h3>Mô hình #${id}</h3>
                             <p class="text-muted">Sản phẩm đã được lưu vào danh sách yêu thích.</p>
                             <div style="display:flex; gap:8px; margin-top:10px;">
-                                <a href="product-detail.html" class="btn btn-outline btn-sm" style="flex:1; text-align:center;">Xem chi tiết</a>
+                                <a href="${detailHref}" class="btn btn-outline btn-sm" style="flex:1; text-align:center;">Xem chi tiết</a>
                                 <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="removeWishlist('${id}')">Xóa</button>
                             </div>
                         </div>
                     </article>
                 `;
             }).join("");
+
         });
 
         function removeWishlist(id) {
@@ -154,6 +156,9 @@
             </div>
         </div>
     </footer>
+    <!-- Cấu hình API và Đồng bộ Trạng thái -->
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>
+

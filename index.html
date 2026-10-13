@@ -38,7 +38,7 @@
                 <!-- Logo thương hiệu -->
                 <a href="index.html" class="brand-logo">Car<span>Model</span>Store</a>
 
-                <!-- Menu chính 5 mục trên cùng 1 dòng: Trang chủ, Hãng xe, Sản phẩm, Sắp ra mắt, Liên hệ -->
+                <!-- Menu chính 6 mục trên cùng 1 dòng: Trang chủ, Hãng xe, Sản phẩm, Phụ kiện, Sắp ra mắt, Liên hệ -->
                 <nav class="main-nav" aria-label="Menu chính">
                     <ul>
                         <li><a href="index.html" aria-current="page">Trang chủ</a></li>
@@ -53,7 +53,7 @@
                 <!-- Cùng dòng bên phải: Ô tìm kiếm + Icon xe đẩy giỏ hàng -->
                 <div class="header-right-actions">
                     <form class="search-form" action="products.html" method="get" role="search">
-                        <label for="q" class="sr-only" style="position:absolute;left:-9999px;">Tìm mô hình</label>
+                        <label for="q" class="sr-only">Tìm mô hình</label>
                         <input type="search" id="q" name="q" placeholder="Tìm hãng xe, dòng xe, tỉ lệ...">
                         <button type="submit">Tìm</button>
                     </form>
@@ -71,55 +71,53 @@
     <div class="promo-banner">
         <strong>Cập nhật giá mới</strong> &ndash; Đợt tháng 10/2026: giá đã điều chỉnh theo tỉ giá nhập khẩu mới nhất, xem chi tiết tại từng mô hình.
     </div>
+
     <main id="main">
-        >
+        <!-- HERO BANNER: GRADIENT VÀNG KIM & ĐEN THAN CHÌ -->
+        <section class="hero-section">
             <div class="container">
-                <div>
-         <!-- HERO BANNER: GRADIENT VÀNG KIM & ĐEN THAN CHÌ -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-card">
-                <!-- CỘT TRÁI: TIÊU ĐỀ TIẾNG ANH PHÓNG TO VÀNG ĐẬM & MÔ TẢ -->
-                <div class="hero-left">
-                    <h1 class="hero-main-title">AUTOSCALE EXCLUSIVE COLLECTION</h1>
-                    <p class="hero-desc">
-                        Hàng trăm mẫu mô hình đúc kim loại, tái hiện tinh xảo từng chi tiết từ Ferrari, Porsche, Lamborghini... kèm giải pháp sa bàn trưng bày đẳng cấp.
-                    </p>
-                    <div class="hero-actions">
-                        <a href="products.html" class="btn btn-gold-blend">Khám phá bộ sưu tập</a>
-                        <a href="brands.html" class="btn btn-outline-white">Xem theo hãng xe</a>
+                <div class="hero-card">
+                    <!-- CỘT TRÁI: TIÊU ĐỀ TIẾNG ANH PHÓNG TO VÀNG ĐẬM & MÔ TẢ -->
+                    <div class="hero-left">
+                        <h1 class="hero-main-title">AUTOSCALE EXCLUSIVE COLLECTION</h1>
+                        <p class="hero-desc">
+                            Hàng trăm mẫu mô hình đúc kim loại, tái hiện tinh xảo từng chi tiết từ Ferrari, Porsche, Lamborghini... kèm giải pháp sa bàn trưng bày đẳng cấp.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="products.html" class="btn btn-gold-blend">Khám phá bộ sưu tập</a>
+                            <a href="brands.html" class="btn btn-outline-white">Xem theo hãng xe</a>
+                        </div>
                     </div>
-                </div>
 
-                <!-- CỘT PHẢI: KHUNG TRƯNG BÀY CÓ ẢNH & ĐIỀU HƯỚNG 4 BỘ SƯU TẬP -->
-                <div class="hero-right">
-                    <div class="collection-showcase-box">
-                        <!-- Nút điều hướng trái/phải -->
-                        <div class="showcase-nav-bar">
-                            <span class="collection-counter" id="collectionCounter">Bộ sưu tập 01 / 04</span>
-                            <div class="nav-arrow-group">
-                                <button type="button" class="btn-arrow" id="prevSlideBtn" aria-label="Bộ sưu tập trước">❮</button>
-                                <button type="button" class="btn-arrow" id="nextSlideBtn" aria-label="Bộ sưu tập tiếp theo">❯</button>
+                    <!-- CỘT PHẢI: KHUNG TRƯNG BÀY CÓ ẢNH & ĐIỀU HƯỚNG 4 BỘ SƯU TẬP -->
+                    <div class="hero-right">
+                        <div class="collection-showcase-box">
+                            <!-- Nút điều hướng trái/phải -->
+                            <div class="showcase-nav-bar">
+                                <span class="collection-counter" id="collectionCounter">Bộ sưu tập 01 / 04</span>
+                                <div class="nav-arrow-group">
+                                    <button type="button" class="btn-arrow" id="prevSlideBtn" aria-label="Bộ sưu tập trước">❮</button>
+                                    <button type="button" class="btn-arrow" id="nextSlideBtn" aria-label="Bộ sưu tập tiếp theo">❯</button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Khung hình ảnh mô hình xe -->
-                        <div class="showcase-img-wrap">
-                            <img id="collectionImg" src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80" alt="Mô hình siêu xe">
-                            <span class="showcase-badge" id="collectionScale">Tỉ lệ 1:18 Precision</span>
-                        </div>
+                            <!-- Khung hình ảnh mô hình xe: 4 ảnh minh hoạ bộ sưu tập -->
+                            <div class="showcase-img-wrap">
+                                <img id="collectionImg" src="assets/img/ferrari-f40.webp" alt="Mô hình siêu xe">
+                                <span class="showcase-badge" id="collectionScale">Ferrari Collection</span>
+                            </div>
 
-                        <!-- Chi tiết thông tin bộ sưu tập -->
-                        <div class="showcase-content">
-                            <h3 class="collection-name" id="collectionName">HYPERCAR DINH CAO: PORSCHE 911 & FERRARI F40</h3>
-                            <p class="collection-feature" id="collectionFeature">Sơn hấp nhiệt 3 lớp • Mở toàn phần cửa xe & khoang động cơ</p>
-                            <a href="product-detail.html" class="btn-showcase-link" id="collectionLink">Xem chi tiết bộ sưu tập này →</a>
+                            <!-- Chi tiết thông tin bộ sưu tập -->
+                            <div class="showcase-content">
+                                <h3 class="collection-name" id="collectionName">FERRARI: TINH HOA SIÊU XE ITALIA</h3>
+                                <p class="collection-feature" id="collectionFeature">Sơn đỏ bóng đa lớp • Sọc đua trắng nguyên bản • Mâm hợp kim chi tiết cao</p>
+                                <a href="product-detail.html" class="btn-showcase-link" id="collectionLink">Xem chi tiết bộ sưu tập này →</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
         <section class="section container">
             <div class="section-head">
@@ -159,13 +157,12 @@
                 <h2>Mô hình bán chạy</h2>
                 <a href="products.html">Xem tất cả sản phẩm &rarr;</a>
             </div>
+            <!-- Ảnh: sp01, sp13 đã có ảnh thật; các mẫu còn lại dùng assets/img/ferrari-f40.webp cho tới khi có ảnh -->
             <div class="grid" id="bestSellerGrid">
                 <article class="car-card">
                     <div class="car-card__media">
-                        <!-- <div><img src="asset/img/product.jpg" /></div> -->
-                        <button class="wishlist-btn" data-product-id="sp01" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
                         <div class="car-card-img">
-                            <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80" alt="Mô hình xe đồ chơi Lamborghini Countach">
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe đồ chơi Ferrari F40">
                         </div>
                     </div>
                     <div class="car-card__body">
@@ -174,14 +171,13 @@
                         <p class="scale-label">Tỉ lệ 1:18 · Đúc kim loại tỉ lệ theo xe thật, mở cửa</p>
                         <p class="star-rating"><span class="stars">★★★★★</span> 4.8 (126 đánh giá)</p>
                         <p class="price-tag">2.450.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=1">Xem chi tiết</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Xem chi tiết</a>
                     </div>
                 </article>
                 <article class="car-card">
                     <div class="car-card__media">
-                        <button class="wishlist-btn" data-product-id="sp02" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
                         <div class="car-card-img">
-                            <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80" alt="Mô hình xe đồ chơi Lamborghini Countach">
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe đồ chơi Ferrari 250 GTO">
                         </div>
                     </div>
                     <div class="car-card__body">
@@ -190,14 +186,13 @@
                         <p class="scale-label">Tỉ lệ 1:24 · Đúc kim loại, hộp sưu tầm</p>
                         <p class="star-rating"><span class="stars">★★★★★</span> 4.6 (84 đánh giá)</p>
                         <p class="price-tag">1.290.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=2">Xem chi tiết</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Xem chi tiết</a>
                     </div>
                 </article>
                 <article class="car-card">
                     <div class="car-card__media">
-                        <button class="wishlist-btn" data-product-id="sp03" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
                         <div class="car-card-img">
-                            <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80" alt="Mô hình xe đồ chơi Lamborghini Countach">
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe đồ chơi Lamborghini Countach">
                         </div>
                     </div>
                     <div class="car-card__body">
@@ -206,15 +201,13 @@
                         <p class="scale-label">Tỉ lệ 1:18 · Đúc kim loại, mở cửa & capo</p>
                         <p class="star-rating"><span class="stars">★★★★★</span> 4.7 (97 đánh giá)</p>
                         <p class="price-tag">2.190.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=3">Xem chi tiết</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Xem chi tiết</a>
                     </div>
                 </article>
                 <article class="car-card">
                     <div class="car-card__media">
-                        
-                        <button class="wishlist-btn" data-product-id="sp04" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
-                       <div class="car-card-img">
-                            <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80" alt="Mô hình xe đồ chơi Lamborghini Countach">
+                        <div class="car-card-img">
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe đồ chơi Lamborghini Huracán STO">
                         </div>
                     </div>
                     <div class="car-card__body">
@@ -223,7 +216,7 @@
                         <p class="scale-label">Tỉ lệ 1:24 · Đúc kim loại, sơn nhám như bản thật</p>
                         <p class="star-rating"><span class="stars">★★★★☆</span> 4.5 (63 đánh giá)</p>
                         <p class="price-tag">980.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=4">Xem chi tiết</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Xem chi tiết</a>
                     </div>
                 </article>
             </div>
@@ -235,15 +228,14 @@
                 <a href="preorder.html">Xem tất cả &rarr;</a>
             </div>
             <p class="text-muted" style="margin-top:-.6rem;">Đặt cọc trước để giữ suất cho các phiên bản giới hạn, số lượng có hạn.</p>
+            
             <div class="grid" id="preorderGrid">
                 <article class="car-card">
                     <div class="car-card__media">
                         <span class="badge-preorder">Pre-order</span>
-                        <button class="wishlist-btn" data-product-id="sp13" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
                         <div class="car-card-img">
-    <span class="badge-preorder">PRE-ORDER</span>
-    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=600&q=80" alt="Mô hình xe Bugatti Chiron">
-</div>
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe Bugatti Chiron">
+                        </div>
                     </div>
                     <div class="car-card__body">
                         <span class="brand-badge">Bugatti</span>
@@ -251,17 +243,15 @@
                         <p class="scale-label">Tỉ lệ 1:18 · Đúc kim loại cao cấp, số lượng giới hạn</p>
                         <p class="star-rating"><span class="stars">★★★★★</span> 5.0 (19 đánh giá)</p>
                         <p class="price-tag">3.450.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=5">Đặt hàng trước</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Đặt hàng trước</a>
                     </div>
                 </article>
                 <article class="car-card">
                     <div class="car-card__media">
                         <span class="badge-preorder">Pre-order</span>
-                        <button class="wishlist-btn" data-product-id="sp14" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
                         <div class="car-card-img">
-    <span class="badge-preorder">PRE-ORDER</span>
-    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=600&q=80" alt="Mô hình xe Koenigsegg Jesko">
-</div>
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe Koenigsegg Jesko">
+                        </div>
                     </div>
                     <div class="car-card__body">
                         <span class="brand-badge">Koenigsegg</span>
@@ -269,17 +259,15 @@
                         <p class="scale-label">Tỉ lệ 1:18 · Đúc kim loại, hộp trưng bày kính</p>
                         <p class="star-rating"><span class="stars">★★★★★</span> 4.9 (12 đánh giá)</p>
                         <p class="price-tag">3.190.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=6">Đặt hàng trước</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Đặt hàng trước</a>
                     </div>
                 </article>
                 <article class="car-card">
                     <div class="car-card__media">
                         <span class="badge-preorder">Pre-order</span>
-                        <button class="wishlist-btn" data-product-id="sp15" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">♡</button>
                         <div class="car-card-img">
-    <span class="badge-preorder">PRE-ORDER</span>
-    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=600&q=80" alt="Mô hình xe Pagani Utopia">
-</div>
+                            <img src="assets/img/ferrari-f40.webp" alt="Mô hình xe Pagani Utopia">
+                        </div>
                     </div>
                     <div class="car-card__body">
                         <span class="brand-badge">Pagani</span>
@@ -287,7 +275,7 @@
                         <p class="scale-label">Tỉ lệ 1:18 · Đúc kim loại cao cấp, sản xuất theo đơn đặt trước</p>
                         <p class="star-rating"><span class="stars">★★★★★</span> 5.0 (7 đánh giá)</p>
                         <p class="price-tag">3.650.000đ</p>
-                        <a class="btn btn-primary btn-block" href="product-detail.html?id=7">Đặt hàng trước</a>
+                        <a class="btn btn-primary btn-block" href="product-detail.html">Đặt hàng trước</a>
                     </div>
                 </article>
             </div>
@@ -299,15 +287,13 @@
             <div class="footer-grid">
                 <div>
                     <h4>CarModelStore</h4>
-                    <p style="font-size:.85rem;">Chuyên mô hình ô tô thu nhỏ tỉ lệ 1:18 - 1:64 cho người sưu tầm.
-                    Đồ án môn Lập trình Web &ndash; Chương 1 &amp; 2.</p>
+                    <p class="footer-intro">Chuyên mô hình ô tô thu nhỏ tỉ lệ 1:18 - 1:64 cho người sưu tầm.</p>
                 </div>
                 <div>
                     <h4>Mua sắm</h4>
                     <ul>
                         <li><a href="brands.html">Theo hãng xe</a></li>
                         <li><a href="products.html">Tất cả mô hình</a></li>
-                        <li><a href="accessories.html">Phụ kiện</a></li>
                         <li><a href="cart.html">Giỏ hàng</a></li>
                     </ul>
                 </div>
@@ -316,7 +302,6 @@
                     <ul>
                         <li><a href="login.html">Đăng nhập</a></li>
                         <li><a href="register.html">Đăng ký</a></li>
-                        <li><a href="wishlist.html">Yêu thích</a></li>
                     </ul>
                 </div>
                 <div>
@@ -329,47 +314,49 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                &copy; 2026 CarModelStore &ndash; Bài tập Chương 1 &amp; 2, môn Lập trình Web. Nhóm 05.
+                &copy; 2026 CarModelStore &ndash; Mô hình ô tô thu nhỏ dành cho người sưu tầm.
             </div>
         </div>
     </footer>
+
     <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/api.js"></script>
-    <!-- SCRIPT ĐIỀU HƯỚNG 4 TRANG BỘ SƯU TẬP ĐỘC LẬP -->
+
+    <!-- SCRIPT ĐIỀU HƯỚNG 4 BỘ SƯU TẬP TRONG HERO BANNER (chỉ còn đúng 1 bản, đã bỏ các bản lặp gây lỗi) -->
     <script>
-        // Dữ liệu 4 bộ sưu tập độc lập (ảnh, tỉ lệ, tên, đặc điểm, link)
+        // 4 bộ sưu tập ở Hero banner: ảnh lấy từ thư mục assets/img
         const collections = [
             {
                 counter: "Bộ sưu tập 01 / 04",
-                scale: "Tỉ lệ 1:18 Precision",
-                name: "HYPERCAR ĐỈNH CAO: PORSCHE 911 & FERRARI F40",
-                feature: "Sơn hấp nhiệt 3 lớp • Mở toàn phần cửa xe & khoang động cơ",
-                img: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=700&q=80",
+                scale: "Ferrari Collection",
+                name: "FERRARI: TINH HOA SIÊU XE ITALIA",
+                feature: "Sơn đỏ bóng đa lớp • Sọc đua trắng nguyên bản • Mâm hợp kim chi tiết cao",
+                img: "assets/img/ferrari-f40.webp",
                 link: "product-detail.html"
             },
             {
                 counter: "Bộ sưu tập 02 / 04",
-                scale: "Tỉ lệ 1:24 Exclusive",
-                name: "LAMBORGHINI AVENTADOR SVJ & SIÁN FKP 37",
-                feature: "Vỏ hợp kim đúc đầm tay • Đèn LED pha sáng thực tế",
-                img: "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=700&q=80",
-                link: "product-detail.html"
+                scale: "Hypercar Collection",
+                name: "FERRARI HYPERCAR: PHIÊN BẢN ĐEN NHÁM",
+                feature: "Thân xe đen nhám • Mâm vàng kim nổi bật • Logo ngựa chồm chi tiết",
+                img: "assets/img/FERARI.jpg",
+                link: "brand-detail.html"
             },
             {
                 counter: "Bộ sưu tập 03 / 04",
-                scale: "Tỉ lệ 1:64 Mini Track",
-                name: "HỘP TRƯNG BÀY DIORAMA SA BÀN GARA TOKYO",
-                feature: "Kèm hộp mica chống bụi & hệ thống đèn led trần gara",
-                img: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80",
-                link: "accessories.html"
+                scale: "Limited Edition",
+                name: "BUGATTI CHIRON: BẢN GIỚI HẠN ĐỎ - ĐEN",
+                feature: "Hai tông đỏ - đen đặc trưng • Lưới tản nhiệt hình móng ngựa • Nhận đặt trước",
+                img: "assets/img/OTO.webp",
+                link: "preorder.html"
             },
             {
                 counter: "Bộ sưu tập 04 / 04",
-                scale: "Tỉ lệ 1:18 Limited",
-                name: "MCLAREN P1 GTR RACING EDITION (BẢN GIỚI HẠN)",
-                feature: "Cánh gió sợi carbon • Vô lăng đánh lái theo bánh trước",
-                img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=700&q=80",
+                scale: "Racing Collection",
+                name: "FERRARI RACING: SỌC ĐUA HUYỀN THOẠI",
+                feature: "Dải sọc đua trắng nguyên bản • Mâm hợp kim thể thao • Nhận đặt trước",
+                img: "assets/img/ferrari-f40.webp",
                 link: "preorder.html"
             }
         ];
